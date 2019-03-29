@@ -1,12 +1,17 @@
 from collections import namedtuple
+import matplotlib.pyplot as plt
+from sympy.ntheory import sqrt_mod
+
 Point = namedtuple("Point", "x y")
 
 O = 'Origin'
-p = 15733
-a = 1
-b = 3
+
+a = 2
+b = 2
 
 def valid(P):
+    # print((P.y**2)%p)
+    # print((P.x**3 + a*P.x + b) % p)                  
     if P == O:
         return True
     else:
@@ -34,7 +39,6 @@ def ec_add(P, Q):
     elif Q == ec_inv(P):
         result = O
     else:
-        # Cases not involving the origin.
         if P == Q:
             dydx = ((3 * P.x**2 + a) * inv_mod_p(2 * P.y)) % p
         else:
@@ -45,10 +49,66 @@ def ec_add(P, Q):
     assert valid(result)
     return result
 
-P = Point(6, 15)
-Q = Point(8, 1267)
-R = Point(2, 3103)
-TwoP = ec_add(P, P)
+def test_singularity():
+    if 4*a**3+27*b**2!=0:
+        print("the curve is non-singulat")
+    else:
+        print("the curve is singular and should not be used")
 
-print(TwoP)
+def plot_curve(p,a,b):
+    x= []
+    y = []
+    y_neg = []
+    for i in range(-1000,1000):
+        j = i**3 + a*i + b
+        x.append(i)
+        y.append(j)
+        y_neg.append(-1*j)
+    plt.plot(x,y)
+    plt.plot(x,y_neg)
+    plt.show()
 
+def curve_under_field(p,a,b):
+    for i in range(1000):
+        if i in range(0,p):
+            j = i**3 + a*i + b
+            j_final = sqrt_mod(j,p,True)
+            # print(j_final)
+            if j_final==None:
+                continue
+            else:
+                if type(j_final)==list and len(j_final) > 1:
+                    # print(j_final[0])
+                    # print(j_final[1])
+                    x_field.append(i)
+                    x_field.append(i)
+                    # print("Modulus :-",j%p,(j_final[0]**2)%p,(j_final[1]**2)%p)
+                    y_field.append(j_final[0])
+                    y_field.append(j_final[1])
+            # plt.scatter(i,j)
+    # plt.show()
+
+def find_order(P):
+    order = 0
+    P_inv = ec_inv(P)
+    # print(P)
+    # print(P_inv)
+    temp = P
+    while (temp.x!=P_inv.x) or (temp.y!=P_inv.y):
+        order = order+1
+        temp = ec_add(temp , P)
+        print(temp)
+    return order+2
+
+p = 17
+plot_curve(p,a,b)
+x_field = []
+y_field = []
+curve_under_field(p,a,b)
+
+# P = Point(x_field[2],y_field[2])
+P = Point(x=5,y=1)
+print(P)
+print(valid(P))
+print(find_order(P))
+# print(ec_inv(P))
