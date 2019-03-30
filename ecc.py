@@ -1,13 +1,22 @@
 from collections import namedtuple
 import matplotlib.pyplot as plt
 from sympy.ntheory import sqrt_mod
+import math
 
-Point = namedtuple("Point", "x y")
 
-O = 'Origin'
 
-a = 1
-b = 3
+#defining large prime numbers
+
+def binaryToDecimal(binary): 
+      
+    binary1 = binary 
+    decimal, i, n = 0, 0, 0
+    while(binary != 0): 
+        dec = binary % 10
+        decimal = decimal + dec * pow(2, i) 
+        binary = binary//10
+        i += 1
+    return decimal 
 
 def isPrime(n):
     for i in range(2,int(n**0.5)+1):
@@ -84,11 +93,8 @@ def curve_under_field(p,a,b):
             continue
         else:
             if type(j_final)==list and len(j_final) > 1:
-                # print(j_final[0])
-                # print(j_final[1])
                 x_field.append(i)
                 x_field.append(i)
-                # print("Modulus :-",j%p,(j_final[0]**2)%p,(j_final[1]**2)%p)
                 y_field.append(j_final[0])
                 y_field.append(j_final[1])
         # plt.scatter(i,j)
@@ -106,12 +112,18 @@ def find_order(P):
         print(temp)
     return order+2
 
+
+
+Point = namedtuple("Point", "x y")
+O = 'Origin'
+a = 1
+b = 3
 p = 15733
 plot_curve(p,a,b)
 x_field = []
 y_field = []
 curve_under_field(p,a,b)
-
+P = Point(x=0,y=0)
 # P = Point(x_field[2],y_field[2])
 
 #searching for P with prime order q
@@ -127,3 +139,19 @@ for i in range(l):
         break
 
 print(prime_order,prime_order_point)
+
+#part 2 of the assignment
+
+k = math.floor(math.log(prime_order,2))
+biniary_string = input("Enter "+str(k)+" digit string")
+d = binaryToDecimal(int(biniary_string))
+if d<prime_order:
+    count = 0
+    temp = P
+    while count<=d:
+        count = count+1
+        temp = ec_add(temp,P)
+    print(temp)
+
+
+
