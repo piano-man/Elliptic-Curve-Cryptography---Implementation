@@ -2,6 +2,7 @@ from collections import namedtuple
 import matplotlib.pyplot as plt
 from sympy.ntheory import sqrt_mod
 import math
+import random
 
 
 
@@ -9,7 +10,6 @@ import math
 
 def binaryToDecimal(binary): 
       
-    binary1 = binary 
     decimal, i, n = 0, 0, 0
     while(binary != 0): 
         dec = binary % 10
@@ -112,6 +112,33 @@ def find_order(P):
         print(temp)
     return order+2
 
+def get_q(P,d):
+    count = 0
+    temp = P
+    while count<=d:
+        count = count+1
+        temp = ec_add(temp,P)
+    return temp
+
+def generate_binary(n):
+
+
+    bin_arr = []
+    bin_str = [0] * n
+
+    for i in range(0, int(math.pow(2,n))):
+        bin_arr.append("".join(map(str,bin_str))[::-1])
+        bin_str[0] += 1
+    # Iterate through entire array if there carrying
+        for j in range(0, len(bin_str) - 1):
+            if bin_str[j] == 2:
+
+                bin_str[j] = 0
+                bin_str[j+1] += 1
+                continue
+            else:
+                break
+    return bin_arr
 
 
 Point = namedtuple("Point", "x y")
@@ -142,16 +169,18 @@ print(prime_order,prime_order_point)
 
 #part 2 of the assignment
 
+f = open("test.txt","w+") 
 k = math.floor(math.log(prime_order,2))
-biniary_string = input("Enter "+str(k)+" digit string")
-d = binaryToDecimal(int(biniary_string))
-if d<prime_order:
-    count = 0
-    temp = P
-    while count<=d:
-        count = count+1
-        temp = ec_add(temp,P)
-    print(temp)
+# biniary_string = input("Enter "+str(k)+" digit string")
+binary_array = generate_binary(k)
+random_strings = []
+# print(random_strings)
+for i in range(5000):
+    random_strings.append(int(binary_array[random.randint(1,(2**10)-1)]))
+print(random_strings)
 
-
-
+for i in range(5000):
+    d = binaryToDecimal(random_strings[i])
+    if d<prime_order:
+        q = get_q(P,d)
+        f.write(str(q)+"\n")
