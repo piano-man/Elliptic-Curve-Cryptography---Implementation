@@ -101,6 +101,7 @@ def curve_under_field(p,a,b):
 # plt.show()
 
 def find_order(P):
+    cyclic_group = []
     order = 0
     P_inv = ec_inv(P)
     # print(P)
@@ -108,9 +109,11 @@ def find_order(P):
     temp = P
     while (temp.x!=P_inv.x) or (temp.y!=P_inv.y):
         order = order+1
+        cyclic_group.append(temp)
         temp = ec_add(temp , P)
         print(temp)
-    return order+2
+    cyclic_group.append(temp)
+    return order+2,cyclic_group
 
 def get_q(P,d):
     count = 0
@@ -159,12 +162,15 @@ prime_order_point = Point(0,0)
 l = len(x_field)
 for i in range(l):
     P = Point(x_field[i],y_field[i])
-    order = find_order(P)
+    order,cyclic_group = find_order(P)
     if isPrime(order):
         prime_order = order
         prime_order_point = P
         break
 
+
+if prime_order!=0:
+    print(len(cyclic_group))
 print(prime_order,prime_order_point)
 
 #part 2 of the assignment
@@ -184,3 +190,7 @@ for i in range(5000):
     if d<prime_order:
         q = get_q(P,d)
         f.write(str(q)+"\n")
+
+#part 3 of the assignment
+
+
