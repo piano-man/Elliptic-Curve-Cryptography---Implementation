@@ -123,6 +123,15 @@ def get_q(P,d):
         temp = ec_add(temp,P)
     return temp
 
+def get_q_fast(P,d):
+    result = P
+    while d>0:
+        if(d&1):
+            result = ec_add(result,P)
+        d = d>>1
+        P = ec_add(P,P)
+    return result
+
 def generate_binary(n):
 
 
